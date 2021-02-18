@@ -1,0 +1,38 @@
+version: "3"
+
+services:
+  nginx:
+    build:
+      context: .
+      dockerfile: ./nginx/Dockerfile
+    image: nginx
+    container_name: nginx
+    restart: unless-stopped
+    ports:
+      - 3000:3000
+    networks:
+      - p3-network
+    depends_on:
+      - influx
+
+  influx:
+    build:
+      context: .
+      dockerfile: ./influx/Dockerfile
+    image: influx
+    container_name: influx
+    restart: unless-stopped
+    environment:
+      - INFLUXDB_ADMIN_USER=admin
+      - INFLUXDB_ADMIN_PASSWORD=password
+      - INFLUXDB_ADMIN_PRIMARY_BUCKET_NAME=c1
+      - INFLUXDB_ADMIN_ORG=p3
+      - INFLUXDB_TOKEN=4ZP4qz3E0w-EqqzOifQ-UNFKLIHhDHCgjf1pbnGV9xp0QeJ7vp8VFx8xvt4wFXj2eIm_518ITE51AXDoYjQ9CA==
+    ports:
+      - 9999:8086
+    networks:
+      - p3-network
+
+networks:
+  p3-network:
+    driver: bridge
